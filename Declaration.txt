@@ -1,0 +1,27 @@
+Top of each program:
+/*
+Name: Tyler Meserve
+Date: 
+Homework #: 
+Source file: 
+Class: C343
+Action: 
+External Assistance Provided By: 
+*/
+
+
+Top of Each Function:
+    /*
+    Action: (tells what it's supposed to do)
+    Params: (name of params and what they represent to the function)
+    Returns: (what item is being returned if any void if nothing)
+    Precondition: (tells user what the params should be to guarantee correct output)
+    */
+
+
+
+//
+
+/* ************************  Program Output  *******************************
+
+*/
