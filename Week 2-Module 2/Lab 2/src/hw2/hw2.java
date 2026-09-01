@@ -238,7 +238,8 @@ class List
             return false;
         else if (size == 1)
             this.clear();
-        else {
+        else
+        {
             this.head = this.head.next;
             this.size--;
         }
