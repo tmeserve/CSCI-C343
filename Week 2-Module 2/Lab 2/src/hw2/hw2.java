@@ -3,6 +3,16 @@ package hw2;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/*
+Name: Tyler Meserve
+Date: 9/1/2026
+Homework #: Lab 2
+Source file: hw2.java
+Class: C343
+Action: Demonstrates building & manipulating a singly linked list and custom iterators
+External Assistance Provided By: 
+*/
+
 class Main
 {
     private static Scanner scan = new Scanner(System.in);
@@ -12,7 +22,7 @@ class Main
         List list = new List();
         boolean quit = false;
         int input = -1;
-        String inputError = "Please input 0-6.";
+        String inputError = "Please input 0-7.";
 
         while (!quit)
         {
@@ -25,6 +35,7 @@ class Main
                 System.out.println("4 - Print list");
                 System.out.println("5 - Check if the list is ordered");
                 System.out.println("6 - Print using toString()");
+                System.out.println("7 - Calculate the sum of the linked list");
                 System.out.print("Selection: ");
                 input = scan.nextInt();
                 scan.nextLine();
@@ -40,8 +51,10 @@ class Main
                         insertBack(list);
                         break;
                     case 3:
-                        list.removeFront();
-                        System.out.println("The front has been removed");
+                        if (list.removeFront())
+                            System.out.println("The front has been removed.");
+                        else
+                            System.out.println("The list is empty; nothing to remove");
                         break;
                     case 4:
                         list.print();
@@ -59,6 +72,9 @@ class Main
                     case 6:
                         System.out.println("Singly Linked List: " + list.toString());
                         break;
+                    case 7:
+                        sum(list.begin());
+                        break;
                     default:
                         System.out.println(inputError);
                         break;
@@ -69,6 +85,12 @@ class Main
         }
     }
 
+    /*
+    Action: Prompts the user for an integer and inserts it at the front of the given list.
+    Params: list - the list to insert into.
+    Returns: none.
+    Precondition: list is not null.
+    */
     public static void insertFront(List list)
     {
         try
@@ -83,6 +105,12 @@ class Main
         { System.out.println("Please enter a valid integer."); }
     }
 
+    /*
+    Action: Prompts the user for an integer and inserts it at the back of the given list.
+    Params: list - the list to insert into.
+    Returns: none.
+    Precondition: list is not null.
+    */
     public static void insertBack(List list)
     {
         try
@@ -95,6 +123,28 @@ class Main
         }
         catch (InputMismatchException e)
         { System.out.println("Please enter a valid integer."); }
+    }
+
+    /*
+    Action: Traverses a list using a ListIterator and prints the sum of its elements.
+    Params: list - an iterator positioned at the first node of the list to sum.
+    Returns: none.
+    Precondition: list is not null.
+    */
+    public static void sum(ListIterator list)
+    {
+        int sum = 0;
+
+        while (list.hasNext())
+        {
+            sum += list.get();
+            list = list.next();
+        }
+
+        if (list != null)
+            sum += list.get();
+
+        System.out.println("The sum of the linked list is " + sum);
     }
 }
 
@@ -111,6 +161,12 @@ class ListNode
         this.datum = datum;
         this.next = null;
     }
+
+    public ListNode(ListNode node)
+    {
+        this.datum = node.datum;
+        this.next = null;
+    }
 }
 
 class List
@@ -119,6 +175,12 @@ class List
     private ListNode tail;
     private int size = 0;
 
+    /*
+    Action: Removes all nodes from the list, resetting it to empty.
+    Params: none.
+    Returns: none.
+    Precondition: none.
+    */
     public void clear()
     {
         this.head = null;
@@ -126,6 +188,12 @@ class List
         this.size = 0;
     }
 
+    /*
+    Action: Inserts a new node holding the given value at the front of the list.
+    Params: value - the integer value to insert.
+    Returns: none.
+    Precondition: none.
+    */
     public void insertFront(int value)
     {
         ListNode temp = new ListNode(value);
@@ -139,6 +207,12 @@ class List
         this.size++;
     }
 
+    /*
+    Action: Inserts a new node holding the given value at the back of the list.
+    Params: value - the integer value to insert.
+    Returns: none.
+    Precondition: none.
+    */
     public void insertBack(int value)
     {
         ListNode temp = new ListNode(value);
@@ -152,22 +226,37 @@ class List
         this.size++;
     }
 
-    public void removeFront()
+    /*
+    Action: Removes the first node in the list, if one exists.
+    Params: none.
+    Returns: true if a node was removed, false if the list was already empty.
+    Precondition: none.
+    */
+    public boolean removeFront()
     {
         if (size == 0)
-            return;
+            return false;
         else if (size == 1)
             this.clear();
         else {
             this.head = this.head.next;
             this.size--;
         }
+
+        return true;
     }
 
+    /*
+    Action: Prints every node in the list, in order, separated by arrows.
+    Params: none.
+    Returns: none.
+    Precondition: none.
+    */
     public void print()
     {
         ListNode currentNode = this.head;
         System.out.print("Singly Linked List: ");
+        
         while (currentNode != null)
         {
             System.out.print(currentNode.datum);
@@ -178,6 +267,12 @@ class List
         System.out.println();
     }
 
+    /*
+    Action: Checks whether the list is in ascending order.
+    Params: none.
+    Returns: true if the list is empty or every element is <= the one after it, false otherwise.
+    Precondition: none.
+    */
     public boolean isOrdered()
     {
         ListNode currentNode = this.head;
@@ -197,21 +292,38 @@ class List
         return true;
     }
 
-    public ListIterator being()
+    /*
+    Action: Creates an iterator positioned at the first node of the list.
+    Params: none.
+    Returns: a ListIterator referencing the list's head node.
+    Precondition: none.
+    */
+    public ListIterator begin()
     { return new ListIterator(this.head); }
 
+
+    /*
+    Action: Builds a string representation of the list's contents, traversed with a ListIterator.
+    Params: none.
+    Returns: a string containing each node's datum in order, separated by arrows.
+    Precondition: none.
+    */
+    @Override
     public String toString()
     {
         String toReturn = "";
-        ListNode currentNode = this.head;
+        ListIterator currentNode = this.begin();
 
-        while (currentNode != null)
+        while (currentNode.hasNext())
         {
-            toReturn += currentNode.datum;
-            currentNode = currentNode.next;
+            toReturn += currentNode.get();
+            currentNode = currentNode.next();
             if (currentNode != null)
                 toReturn += " -> ";
         }
+
+        if (currentNode != null)
+            toReturn += currentNode.get();
         
         return toReturn;
     }
@@ -221,34 +333,45 @@ class ListIterator
 {
     ListNode current;
 
-    // Constructor to initialize the iterator
-    public ListIterator(ListNode head) {
-        this.current = head;
-    }
+    // Constructors
+    public ListIterator() {}
+
+    public ListIterator(ListIterator list)
+    { this.current = list.current; }
+    
+    public ListIterator(ListNode head)
+    { this.current = head; }
 
     // Moves to the next node and returns this iterator
-    ListIterator next() {
-        if (current != null) {
+    ListIterator next()
+    {
+        if (current != null)
             current = current.next;
-        }
         return this;
     }
 
     // Returns the value of the current node
-    int get() {
-        if (current == null) {
+    int get()
+    {
+        if (current == null)
             throw new IllegalStateException("Current node is null");
-        }
         return current.datum;
     }
 
     // Checks if there is a next node available
-    boolean hasNext() {
-        return current != null && current.next != null;
-    }
+    boolean hasNext()
+    { return current != null && current.next != null; }
 
     // Checks if the current pointer is null
-    boolean isNull() {
-        return current == null;
-    }
+    boolean isNull()
+    { return current == null; }
+
+    /*
+    Action: Checks whether this iterator and another iterator reference nodes with the same datum.
+    Params: other - the iterator to compare against.
+    Returns: true if both iterators' current nodes hold the same datum, false otherwise.
+    Precondition: other is not null; both iterators' current nodes are not null.
+    */
+    boolean sameAs(ListIterator other)
+    { return this.get() == other.get(); }
 }
