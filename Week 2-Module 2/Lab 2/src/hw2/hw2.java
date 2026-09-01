@@ -135,14 +135,11 @@ class Main
     {
         int sum = 0;
 
-        while (list.hasNext())
+        while (!list.isNull())
         {
             sum += list.get();
             list = list.next();
         }
-
-        if (list != null)
-            sum += list.get();
 
         System.out.println("The sum of the linked list is " + sum);
     }
@@ -315,16 +312,13 @@ class List
         String toReturn = "";
         ListIterator currentNode = this.begin();
 
-        while (currentNode.hasNext())
+        while (!currentNode.isNull())
         {
             toReturn += currentNode.get();
             currentNode = currentNode.next();
             if (currentNode != null)
                 toReturn += " -> ";
         }
-
-        if (currentNode != null)
-            toReturn += currentNode.get();
         
         return toReturn;
     }
