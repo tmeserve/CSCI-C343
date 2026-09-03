@@ -91,6 +91,8 @@ class Main
                         int evenCount = list.countEven();
                         if (evenCount == 0)
                             System.out.println("There are no even numbers in the list.");
+                        else if (evenCount == 1)
+                            System.out.println("There is 1 even number in the list.");
                         else
                             System.out.println("There are " + evenCount + " even numbers in the list.");
                         break;
@@ -107,7 +109,10 @@ class Main
                 }
             }
             catch (InputMismatchException e)
-            { System.out.println(inputError); }
+            { 
+                System.out.println(inputError);
+                scan.nextLine();
+            }
         }
     }
 
@@ -171,16 +176,21 @@ class Main
     }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Prompts the user for an integer and reports whether that value exists in the given list
+    Params: list -the list to search
+    Returns: none
+    Precondition: list is not null
     */
     public static void find(List list)
     {
+        if (list.head == null)
+        {
+            System.out.println("The list is empty, nothing can be located.");
+            return;
+        }
         try
         {
-            System.out.print("Please input an integer to insert at the back: ");
+            System.out.print("Please input an integer to search for: ");
             int value = scan.nextInt();
             scan.nextLine();
 
@@ -196,10 +206,10 @@ class Main
     }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Retrieves an interator on the last node of the list and prints its value
+    Params: list - the list whose last element will be printed
+    Returns: none
+    Precondition: list is not null and non-empty (end() assumes non-null tail)
     */
     public static void printTailNode(List list)
     {
@@ -231,9 +241,9 @@ class ListNode
 
 class List
 {
-    private ListNode head;
-    private ListNode tail;
-    private int size = 0;
+    protected ListNode head;
+    protected ListNode tail;
+    protected int size = 0;
 
     /*
     Action: Removes all nodes from the list, resetting it to empty.
@@ -297,7 +307,7 @@ class List
         if (size == 0)
             return false;
         else if (size == 1)
-            this.clear();
+            this.clear(); // last node removed - clear() resets both head and tail together
         else
         {
             this.head = this.head.next;
@@ -347,6 +357,7 @@ class List
             if (previousNode.datum > currentNode.datum)
                 return false;
             
+            previousNode = currentNode;
             currentNode = currentNode.next;
         }
 
@@ -363,19 +374,19 @@ class List
     { return new ListIterator(this.head); }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Creates an interator positioned at the last node of the list
+    Params: none
+    Returns: a ListIterator referencing the list's tail node
+    Precondition: none
     */
     public ListIterator end()
     { return new ListIterator(this.tail); }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Increments the value of every node in the list by 1
+    Params: none
+    Returns: none
+    Precondition: None
     */
     public void incrementAll()
     {
@@ -389,10 +400,10 @@ class List
     }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Decreases the value of every node in the list by 1
+    Params: none
+    Returns: none
+    Precondition: None
     */
     public void decreaseAll()
     {
@@ -401,19 +412,21 @@ class List
         while (!currentNode.isNull())
         {
             int value = currentNode.get();
-            currentNode.set(value--);
+            currentNode.set(--value);
             currentNode = currentNode.next();
         }
     }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Searches the list for a node containing the given value
+    Params: value - the integer value to search for
+    Returns: The first ListNode found holding value or null if no such node exists
+    Precondition: None
     */
     public ListNode find(int value)
     {
+        if (this.size == 0)
+            return null;
         ListIterator currentNode = this.begin();
 
         while (!currentNode.isNull())
@@ -428,10 +441,10 @@ class List
     }
 
     /*
-    Action: (tells what it's supposed to do)
-    Params: (name of params and what they represent to the function)
-    Returns: (what item is being returned if any void if nothing)
-    Precondition: (tells user what the params should be to guarantee correct output)
+    Action: Counts how many nodes in the list hold an even value
+    Params: none
+    Returns: the number of even-valued nodes in the list
+    Precondition: none
     */
     public int countEven()
     {
@@ -440,8 +453,8 @@ class List
 
         while (!currentNode.isNull())
         {
-            if (currentNode.get() % 2 == 0)
-                count += 0;
+            if ((currentNode.get() % 2) == 0)
+                count++;
 
             currentNode = currentNode.next();
         }
@@ -502,11 +515,12 @@ class ListIterator
         return current.datum;
     }
 
+    // Sets the value of the current node
     void set(int value)
     {
         if (current == null)
             throw new IllegalStateException("Current node is null");
-        current.datum = value;
+        this.current.datum = value;
     }
 
     // Checks if there is a next node available
