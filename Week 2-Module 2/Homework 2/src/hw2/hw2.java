@@ -478,7 +478,7 @@ class List
         {
             toReturn += currentNode.get();
             currentNode = currentNode.next();
-            if (currentNode != null)
+            if (!currentNode.isNull())
                 toReturn += " -> ";
         }
         
